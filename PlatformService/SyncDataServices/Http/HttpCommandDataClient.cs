@@ -17,7 +17,7 @@ public class HttpCommandDataClient(HttpClient httpClient, IConfiguration configu
             "application/json"
         );
 
-        var response = await _httpClient.PostAsync($"{_configuration["CommandService"]}/api/platforms", httpContent);
+        var response = await _httpClient.PostAsync($"{_configuration["CommandService"]}/api/c/platforms", httpContent);
 
         if (response.IsSuccessStatusCode)
         {
