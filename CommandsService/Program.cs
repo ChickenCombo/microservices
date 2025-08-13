@@ -1,6 +1,14 @@
+using CommandsService.Data;
+using CommandsService.Interfaces;
+using CommandsService.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CommandsConnection")));
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<ICommandRepository, CommandRepository>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -12,5 +20,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+PrepDb.PrepPopulation(app);
 
 app.Run();
