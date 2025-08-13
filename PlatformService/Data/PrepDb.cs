@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PlatformService.Models;
 
 namespace PlatformService.Data;
@@ -14,9 +15,20 @@ public static class PrepDb
 
     private static void SeedData(AppDbContext context)
     {
+        try
+        {
+            Console.WriteLine("--> Attempting to apply database migrations");
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"--> Failed to apply migrations: {ex.Message}");
+        }
+
+
         if (!context.Platforms.Any())
         {
-            Console.WriteLine("Seeding data...");
+            Console.WriteLine("--> Seeding database");
 
             context.Platforms.AddRange(
                 new Platform()
@@ -43,7 +55,7 @@ public static class PrepDb
         }
         else
         {
-            Console.WriteLine("Skipping seeder...");
+            Console.WriteLine("--> Skipping seeder");
         }
     }
 }
