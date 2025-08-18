@@ -37,7 +37,6 @@ public class MessageBusClient : IMessageBusClient
         var channel = await connection.CreateChannelAsync()
             ?? throw new NullReferenceException("Failed to create RabbitMQ channel.");
 
-
         await channel.ExchangeDeclareAsync(
             exchange: "trigger",
             type: ExchangeType.Fanout

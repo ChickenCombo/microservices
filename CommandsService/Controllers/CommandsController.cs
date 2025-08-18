@@ -62,6 +62,6 @@ public class CommandsController(ICommandRepository repository, IMapper mapper) :
 
         var commandDto = _mapper.Map<CommandReadDto>(command);
 
-        return CreatedAtRoute(nameof(GetCommandForPlatform), new { command.Id }, commandCreateDto);
+        return CreatedAtRoute(nameof(GetCommandForPlatform), new { platformId, commandId = command.Id }, commandDto);
     }
 }

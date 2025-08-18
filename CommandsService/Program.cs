@@ -1,3 +1,4 @@
+using AsyncDataServices.AsyncDataService;
 using CommandsService.Data;
 using CommandsService.EventProcessing;
 using CommandsService.Interfaces;
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<ICommandRepository, CommandRepository>();
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+builder.Services.AddHostedService<MessageBusSubscriber>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 

@@ -17,13 +17,14 @@ public class EventProcessor(IServiceScopeFactory serviceScopeFactory, IMapper ma
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
     private readonly IMapper _mapper = mapper;
 
-    public void ProcessEevent(string message)
+    public void ProcessEvent(string message)
     {
         var eventType = DeterminedEvent(message);
 
         switch (eventType)
         {
             case EventType.PlatformPublished:
+                AddPlatform(message);
                 break;
             default:
                 break;
@@ -58,6 +59,11 @@ public class EventProcessor(IServiceScopeFactory serviceScopeFactory, IMapper ma
             {
                 repo.CreatePlatform(platform);
                 repo.SaveChanges();
+                Console.WriteLine("--> Platform added");
+            }
+            else
+            {
+                Console.WriteLine("--> Platform already exists, skipping");
             }
         }
         catch (Exception ex)
