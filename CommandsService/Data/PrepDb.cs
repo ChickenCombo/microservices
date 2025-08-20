@@ -1,3 +1,6 @@
+using CommandsService.Interfaces;
+using CommandsService.Models;
+using CommandsService.SyncDataServices.Grpc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommandsService.Data;
@@ -9,10 +12,14 @@ public static class PrepDb
         using var serviceScope = app.ApplicationServices.CreateScope();
         var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        SeedData(context);
+        var grpcClient = serviceScope.ServiceProvider.GetService<IPlatformDataClient>();
+
+        var platforms = grpcClient!.ReturnAllPlatforms();
+
+        SeedData(serviceScope.ServiceProvider.GetService<ICommandRepository>()!, platforms, context);
     }
 
-    private static void SeedData(AppDbContext context)
+    private static void SeedData(ICommandRepository repo, IEnumerable<Platform> platforms, AppDbContext context)
     {
         try
         {
@@ -25,15 +32,16 @@ public static class PrepDb
         }
 
 
-        if (!context.Platforms.Any())
-        {
-            Console.WriteLine("--> Seeding database");
+        Console.WriteLine("--> Seeding database");
 
-            context.SaveChanges();
-        }
-        else
+        foreach (var plat in platforms)
         {
-            Console.WriteLine("--> Skipping seeder");
+            if (!repo.ExternalPlatformExist(plat.ExternalId))
+            {
+                repo.CreatePlatform(plat);
+            }
         }
+
+        repo.SaveChanges();
     }
 }
